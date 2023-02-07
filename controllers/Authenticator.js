@@ -67,8 +67,6 @@ module.exports = {
           });
         });
 
-        console.log("sdsd", updatedd);
-
         await new Promise((resolve, reject) => {
           DBConnection.query(`
           INSERT INTO user_otp SET ?`,
