@@ -40,6 +40,20 @@ module.exports = {
             return resolve(results);
           });
         });
+
+        await new Promise((resolve, reject) => {
+          DBConnection.query(`
+          UPDATE user_otp SET expired = TRUE
+          WHERE user_id = ?
+          ORDER BY create_datetime DESC
+          LIMIT 1`,
+          [clientId],
+          (error, results) => {
+            if (error) return reject(error);
+            return resolve(results);
+          });
+        });
+        
         if(Array.isArray(otpRow) && otpRow.length){
           const {
             create_datetime
@@ -53,19 +67,6 @@ module.exports = {
           
           return res.send({ user: { token, remains: remainTime} });
         }
-
-        const updatedd = await new Promise((resolve, reject) => {
-          DBConnection.query(`
-          UPDATE user_otp SET expired = TRUE
-          WHERE user_id = ?
-          ORDER BY create_datetime DESC
-          LIMIT 1`,
-          [clientId],
-          (error, results) => {
-            if (error) return reject(error);
-            return resolve(results);
-          });
-        });
 
         await new Promise((resolve, reject) => {
           DBConnection.query(`
